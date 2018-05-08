@@ -1,4 +1,17 @@
-$s = New-PSSession -ComputerName rn-exchange -Credential reece\administrator
+#Servers
+$Certify = "rn-exchange"
+$Exchange = "rn-exchange"
+
+
+#Credentials 
+
+#$Login = Get-Credential -UserName reece\administrator
+
+#Pull cert from Certify Server
+$s = New-PSSession -ComputerName $Certify -Credential reece\administrator
+
 Invoke-Command $s -ScriptBlock {Get-ChildItem -Path cert:\LocalMachine\My\7D27C05C26629947362C5BD809C45E12548A4966 | Export-PfxCertificate -FilePath c:\data\mypfx.pfx -ProtectTo "reece\matt" }
 
 #Exports to \\rn-exchange\c$\data\mypfx.pfx
+
+Invoke-Command $s
