@@ -45,15 +45,17 @@ Function Folder-checkandcreate {
 $Certify = "rn-exchange"
 $Exchange = "rn-exchange"
 
+#Account
+$Account = "reece\rnadmin"
 
 #Credentials
-$Cred = Get-Credentials 
+$Cred = Get-Credentials -AuthUser $Account
 
 
 #Pull cert from Certify Server
 $s = New-PSSession -ComputerName $Certify -Credential $Cred
 
-Invoke-Command $s -ScriptBlock {Get-ChildItem -Path cert:\LocalMachine\My\7D27C05C26629947362C5BD809C45E12548A4966 | Export-PfxCertificate -FilePath c:\data\mypfx.pfx -ProtectTo "reece\matt" }
+Invoke-Command $s -ScriptBlock {Get-ChildItem -Path cert:\LocalMachine\My\7D27C05C26629947362C5BD809C45E12548A4966 | Export-PfxCertificate -FilePath c:\data\mypfx.pfx -ProtectTo $Account }
 
-#Exports to \\rn-exchange\c$\data\mypfx.pfx
+#Exports to \\$Certify\c$\data\mypfx.pfx
 
