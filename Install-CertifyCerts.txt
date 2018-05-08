@@ -55,7 +55,10 @@ $Cred = Get-Credentials -AuthUser $Account
 #Pull cert from Certify Server
 $s = New-PSSession -ComputerName $Certify -Credential $Cred
 
-Invoke-Command $s -ScriptBlock {Get-ChildItem -Path cert:\LocalMachine\My\7D27C05C26629947362C5BD809C45E12548A4966 | Export-PfxCertificate -FilePath c:\data\mypfx.pfx -ProtectTo $Account }
+Invoke-Command $s -ScriptBlock {certutil -p password -exportPFX My 7D27C05C26629947362C5BD809C45E12548A4966 c:\data\cert.pfx}
 
 #Exports to \\$Certify\c$\data\mypfx.pfx
+# key on exchange = 7D27C05C26629947362C5BD809C45E12548A4966
+# key on wrkbnch = EED0ED6FFB213418F06EBAE4012AD09BE6598E10
 
+#Invoke-Command $s -ScriptBlock {certutil -p password -exportPFX My 7D27C05C26629947362C5BD809C45E12548A4966 c:\data\cert.pfx}
