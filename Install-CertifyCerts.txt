@@ -40,6 +40,8 @@ Function Folder-checkandcreate {
 		}
 }
 
+#Cert Thumb
+$Thumb = "7D27C05C26629947362C5BD809C45E12548A4966"
 
 #Servers
 $Certify = "rn-exchange"
@@ -55,7 +57,7 @@ $Cred = Get-Credentials -AuthUser $Account
 #Pull cert from Certify Server
 $s = New-PSSession -ComputerName $Certify -Credential $Cred
 
-Invoke-Command $s -ScriptBlock {certutil -p password -exportPFX My 7D27C05C26629947362C5BD809C45E12548A4966 c:\data\cert.pfx}
+Invoke-Command $s -ScriptBlock {Get-ChildItem -Path cert:\localMachine\my\$using:Thumb | Export-PfxCertificate -FilePath c:\data\asdasdfd.pfx -ProtectTo $using:Account}
 
 #Exports to \\$Certify\c$\data\mypfx.pfx
 
@@ -65,4 +67,7 @@ Invoke-Command $s -ScriptBlock {certutil -p password -exportPFX My 7D27C05C26629
 # key on wrkbnch = EED0ED6FFB213418F06EBAE4012AD09BE6598E10
 # Old commands used
 #Invoke-Command $s -ScriptBlock {$a = Get-ChildItem -Path cert:\localMachine\my\7D27C05C26629947362C5BD809C45E12548A4966 }
-#Invoke-Command $s -ScriptBlock {Export-PfxCertificate -Cert $a -FilePath c:\data\asdasdfd.pfx -ProtectTo $Account}
+#Invoke-Command $s -ScriptBlock {Export-PfxCertificate -Cert $a -FilePath c:\data\asdasdfd.pfx -ProtectTo $using:Account}
+#Invoke-Command $s -ScriptBlock {$mypwd = ConvertTo-SecureString -String "1234" -Force -AsPlainText}
+
+#Invoke-Command $s -ScriptBlock {certutil -p password -exportPFX My 7D27C05C26629947362C5BD809C45E12548A4966 c:\data\cert.pfx}
