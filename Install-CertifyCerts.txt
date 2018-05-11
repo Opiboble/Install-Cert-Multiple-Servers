@@ -56,13 +56,29 @@ $Account = "reece\rnadmin"
 #Credentials
 $Cred = Get-Credentials -AuthUser $Account
 
+#Save location & filename
+$SavePath = "\\$Certify\c$\data\scripts"
+$FullPath = "$SavePath\$Thumb.pfx"
 
-#Pull cert from Certify Server
-$s = New-PSSession -ComputerName $Certify -Credential $Cred
+#PFX Password
+$rawpfxpswd = "ThisIsATest1234"
+$pfxpswd = ConvertTo-SecureString -String "$rawpfxpswd" -Force -AsPlainText
 
-Invoke-Command $s -ScriptBlock {Get-ChildItem -Path cert:\localMachine\my\$using:Thumb | Export-PfxCertificate -FilePath c:\data\asdasdfd.pfx -ProtectTo $using:Account}
 
-#Exports to \\$Certify\c$\data\mypfx.pfx
+#Create sessions needed
+
+$SessionCertify = New-PSSession -ComputerName $Certify -Credential $Cred
+$SessionExchange = New-PSSession -ComputerName $Exchange -Credential $Cred
+
+#Pull cert from Certify Server and saved to \\$Certify\c$\data\$Thumb.pfx
+Invoke-Command $SessionCertify -ScriptBlock {Get-ChildItem -Path cert:\localMachine\my\$using:Thumb | Export-PfxCertificate -FilePath $using:FullPath -Password $using:pfxpswd}
+
+
+#Import to Exchange Server
+Invoke-Command $SessionExchange -ScriptBlock {Get-ChildItem -Path $using:FullPath | Import-PfxCertificate -CertStoreLocation Cert:\LocalMachine\My -Exportable -Password $using:pfxpswd }
+
+#Apply Cert to Exchange 2013+ Services
+Invoke-Command $SessionExchange -ScriptBlock {Enable-ExchangeCertificate -Thumbprint $using:Thumb -Services POP,IMAP,SMTP,IIS}
 
 
 #Notes
