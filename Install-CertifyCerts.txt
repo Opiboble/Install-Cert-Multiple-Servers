@@ -78,6 +78,7 @@ Invoke-Command $SessionCertify -ScriptBlock {Get-ChildItem -Path cert:\localMach
 Invoke-Command $SessionExchange -ScriptBlock {Get-ChildItem -Path $using:FullPath | Import-PfxCertificate -CertStoreLocation Cert:\LocalMachine\My -Exportable -Password $using:pfxpswd }
 
 #Apply Cert to Exchange 2013+ Services
+Invoke-Command $SessionExchange -ScriptBlock {Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn}
 Invoke-Command $SessionExchange -ScriptBlock {Enable-ExchangeCertificate -Thumbprint $using:Thumb -Services POP,IMAP,SMTP,IIS}
 
 
