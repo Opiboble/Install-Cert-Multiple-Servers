@@ -1,3 +1,6 @@
+#Inbound Paramater
+param($result)
+
 #Load functions needed
 
 #Creates Secure Credentials for Storing
@@ -41,7 +44,7 @@ Function Folder-checkandcreate {
 }
 
 #Cert Thumb
-$Thumb = "7D27C05C26629947362C5BD809C45E12548A4966"
+$Thumb = $result.ManagedItem.CertificateThumbprintHash
 
 #Servers
 $Certify = "rn-exchange"
