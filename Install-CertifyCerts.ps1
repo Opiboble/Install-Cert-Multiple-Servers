@@ -86,7 +86,6 @@ $FullPath = "$SavePath\$Thumb.pfx"
 $pfxpswd = ConvertTo-SecureString -String "$rawpfxpswd" -Force -AsPlainText
 
 #Create sessions needed
-
 $SessionCertify = New-PSSession -ComputerName $Certify -Credential $Cred
 $SessionExchange = New-PSSession -ComputerName $Exchange -Credential $Cred
 
@@ -95,8 +94,12 @@ Invoke-Command $SessionCertify -ScriptBlock {Get-ChildItem -Path cert:\localMach
 
 
 #Import to Exchange Server
+If  ($InstallExchange -eq "True") {
 Invoke-Command $SessionExchange -ScriptBlock {Get-ChildItem -Path $using:FullPath | Import-PfxCertificate -CertStoreLocation Cert:\LocalMachine\My -Exportable -Password $using:pfxpswd }
+}
 
 #Apply Cert to Exchange 2013+ Services
+If ($ApplyExchange -eq "True") {
 Invoke-Command $SessionExchange -ScriptBlock {Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn}
 Invoke-Command $SessionExchange -ScriptBlock {Enable-ExchangeCertificate -Thumbprint $using:Thumb -Services POP,IMAP,SMTP,IIS}
+}
