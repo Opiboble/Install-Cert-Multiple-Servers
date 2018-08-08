@@ -1,6 +1,9 @@
 #Inbound Paramater
 param($result)
 
+#INI FIle location
+$INIFile = "C:\Data\Certify\Certify-Cert-Install-Setting.ini"
+
 #Load functions needed
 
 #Creates Secure Credentials for Storing
@@ -43,15 +46,18 @@ Function Folder-checkandcreate {
 		}
 }
 
-#Cert Thumb
-$Thumb = $result.ManagedItem.CertificateThumbprintHash
+Get-Content "$INIFile" | foreach-object -begin {$Settings=@{}} -process { $k = [regex]::split($_,'=='); if(($k[0].CompareTo("") -ne 0) -and ($k[0].StartsWith("[") -ne $True)) { $Settings.Add($k[0], $k[1]) } }
 
+## Variables from INI file
 #Servers
-$Certify = "rn-exchange"
-$Exchange = "rn-exchange"
+$CertifyServer = $Settings.Get_Item("CertifyServer")
+$ExchangeServer = $Settings.Get_Item("ExchangeServer")
 
 #Account
-$Account = "reece\rnadmin"
+$Account = $Settings.Get_Item("Account")
+
+#Cert Thumb
+$Thumb = $result.ManagedItem.CertificateThumbprintHash
 
 #Credentials
 $Cred = Get-Credentials -AuthUser $Account
