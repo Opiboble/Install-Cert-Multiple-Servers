@@ -10,10 +10,10 @@ Function Get-Credentials {
     [string]$PathToCred = "c:\data\scripts"
     )
     $Key = [byte]20,35,18,74,72,75,85,50,71,44,0,21,98,73,98,28
-	
+
 	#Check if folder exists/build folder
 	Folder-checkandcreate -path $PathToCred
-	
+
     #Build the path to the credential file
     $CredFile = $AuthUser.Replace("\","~")
     $File = $PathToCred + "\Credentials-$CredFile.crd"
@@ -21,8 +21,8 @@ Function Get-Credentials {
     If (-not (Test-Path $File))
     {	(Get-Credential $AuthUser).Password | ConvertFrom-SecureString -Key $Key | Set-Content $File
     }
-	
-    #Load the credential file 
+
+    #Load the credential file
     $Password = Get-Content $File | ConvertTo-SecureString -Key $Key
     $AuthUser = (Split-Path $File -Leaf).Substring(12).Replace("~","\")
     $AuthUser = $AuthUser.Substring(0,$AuthUser.Length - 4)
