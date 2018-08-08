@@ -4,6 +4,9 @@ param($result)
 #INI FIle location
 $INIFile = "C:\Data\Certify\Certify-Cert-Install-Setting.ini"
 
+#Cert Thumb - provided as input from Certifytheweb.com tool
+$Thumb = $result.ManagedItem.CertificateThumbprintHash
+
 #Load functions needed
 
 #Creates Secure Credentials for Storing
@@ -56,8 +59,8 @@ $ExchangeServer = $Settings.Get_Item("ExchangeServer")
 #Account
 $Account = $Settings.Get_Item("Account")
 
-#Cert Thumb
-$Thumb = $result.ManagedItem.CertificateThumbprintHash
+#Raw PFX Password Import
+$rawpfxpswd = $Settings.Get_Item("PFXPassword")
 
 #Credentials
 $Cred = Get-Credentials -AuthUser $Account
@@ -67,7 +70,6 @@ $SavePath = "\\$Certify\c$\data\scripts"
 $FullPath = "$SavePath\$Thumb.pfx"
 
 #PFX Password
-$rawpfxpswd = "ThisIsATest1234"
 $pfxpswd = ConvertTo-SecureString -String "$rawpfxpswd" -Force -AsPlainText
 
 
@@ -86,11 +88,3 @@ Invoke-Command $SessionExchange -ScriptBlock {Get-ChildItem -Path $using:FullPat
 #Apply Cert to Exchange 2013+ Services
 Invoke-Command $SessionExchange -ScriptBlock {Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn}
 Invoke-Command $SessionExchange -ScriptBlock {Enable-ExchangeCertificate -Thumbprint $using:Thumb -Services POP,IMAP,SMTP,IIS}
-
-
-#Notes
-# key on exchange = 7D27C05C26629947362C5BD809C45E12548A4966
-# key on wrkbnch = EED0ED6FFB213418F06EBAE4012AD09BE6598E10
-# Old commands used
-#Invoke-Command $s -ScriptBlock {$mypwd = ConvertTo-SecureString -String "1234" -Force -AsPlainText}
-#Invoke-Command $s -ScriptBlock {certutil -p password -exportPFX My 7D27C05C26629947362C5BD809C45E12548A4966 c:\data\cert.pfx}
