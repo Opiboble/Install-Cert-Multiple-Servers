@@ -51,7 +51,7 @@ Function Folder-checkandcreate {
 
 Get-Content "$INIFile" | foreach-object -begin {$Settings=@{}} -process { $k = [regex]::split($_,'=='); if(($k[0].CompareTo("") -ne 0) -and ($k[0].StartsWith("[") -ne $True)) { $Settings.Add($k[0], $k[1]) } }
 
-## Variables from INI file
+## Import variables from INI file
 #Servers
 $CertifyServer = $Settings.Get_Item("CertifyServer")
 $ExchangeServer = $Settings.Get_Item("ExchangeServer")
@@ -62,6 +62,19 @@ $Account = $Settings.Get_Item("Account")
 #Raw PFX Password Import
 $rawpfxpswd = $Settings.Get_Item("PFXPassword")
 
+#Install Cert on Servers
+$InstallExchange = $Settings.Get_Item("InstallExchange")
+$InstallApps = $Settings.Get_Item("InstallApps")
+$InstallRemote = $Settings.Get_Item("InstallRemote")
+
+#Apply Cert on Servers
+$ApplyExchange = $Settings.Get_Item("ApplyExchange")
+$ApplyApps = $Settings.Get_Item("ApplyApps")
+$ApplyRemote = $Settings.Get_Item("ApplyRemote")
+
+
+## Import done
+
 #Credentials
 $Cred = Get-Credentials -AuthUser $Account
 
@@ -71,7 +84,6 @@ $FullPath = "$SavePath\$Thumb.pfx"
 
 #PFX Password
 $pfxpswd = ConvertTo-SecureString -String "$rawpfxpswd" -Force -AsPlainText
-
 
 #Create sessions needed
 
